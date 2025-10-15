@@ -24,16 +24,20 @@
     <h1>Applications.me ❤️ GHL</h1>
     <p>App ID: <b><?php echo $_ENV['APP_ID']; ?></b></p>
     <p>Client ID: <b><?php echo $_ENV['CLIENT_ID']; ?></b></p>
-    <p>Code: <b id="ghl-code"><?php echo $_GET['code'] ?? ''; ?></b></p>
+    <p>GHL Code: <b id="ghl-code"><?php echo $_GET['code'] ?? ''; ?></b></p>
+    <p>Current Access Token: <textarea type="text" id="current-access-token" class="form-control" disabled readonly style="resize:none"></textarea></p>
     <p id="access-token-section">
-        <button id="get-access-token-button" class="btn btn-primary">Get Access Token</button>
+        <button id="get-access-token-button" class="btn btn-primary">Get Access Token Using GHL Code</button>
     </p>
     <p id="refresh-access-token-section">
         <button id="refresh-access-token-button" class="btn btn-success">Refresh Access Token (Optional if access token has expired after 24 hours)</button>
     </p>
-    <p id="campaigns-section">
+    <p id="others-section">
         <button id="get-campaigns-button" class="btn btn-info">Get Campaigns</button>
+        <button id="get-forms-button" class="btn btn-warning">Get Forms</button>
+        <button id="get-funnel-pages-button" class="btn btn-dark">Get Funnel Pages</button>
     </p>
+    <div id="display-results"></div>
 </div>
 
 </body>
