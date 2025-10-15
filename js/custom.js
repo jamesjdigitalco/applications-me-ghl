@@ -13,6 +13,7 @@ $(document).ready(function() {
     showHideSection(false, 'access-token-section')
     showHideSection(false, 'refresh-access-token-section')
     showHideSection(false, 'others-section')
+    showHideSection(false, 'funnel-more-information-fullscreen')
 
     // Get the GHL Code
     ghlCode = $.trim($('#ghl-code').text())
@@ -46,6 +47,11 @@ $(document).ready(function() {
     // When Get Funnel Pages button is clicked
     $('#get-funnel-pages-button').click(function() {
         getFunnelPages()
+    })
+
+    // To close the more information about funnel section
+    $('#close-more-information-funnel-button').click(function() {
+        showHideSection(false, 'funnel-more-information-fullscreen')
     })
 })
 
@@ -259,7 +265,7 @@ function getFunnelPages() {
                 tempHtml += `<table class="table table-striped">
                     <thead>
                         <tr>
-                            <th>Funnel Name</th>
+                            <th>Funnel Page Name</th>
                             <th>URL</th>
                             <th>Deleted</th>
                             <th>Date Added</th>
@@ -274,7 +280,7 @@ function getFunnelPages() {
                         <td>${c.url}</td>
                         <td>${c.deleted}</td>
                         <td>${c.dateAdded}</td>
-                        <td><button onClick="moreInformationOnFunnel('${c._id}')" type="button" class="btn btn-secondary btn-sm">More Information</button></td>
+                        <td><button onClick="moreInformationOnFunnel('${c._id}', '${c.name.replace(/'/g, "")}')" type="button" class="btn btn-secondary btn-sm">More Information</button></td>
                     </tr>`
                 })
                 tempHtml += `</tbody></table>`
@@ -292,12 +298,17 @@ function getFunnelPages() {
 /**
  * Displays more information about a funnel
  * @param {string} funnelId 
+ * @param {string} funnelName
+ * @return void
  */
-function moreInformationOnFunnel(funnelId) {
+function moreInformationOnFunnel(funnelId, funnelName) {
     if (currentAccessToken.length === 0) {
         console.error('No access token available. Cannot get campaigns.')
         return
     }
+    showHideSection(true, 'funnel-more-information-fullscreen')
+    $('#more-information-funnel-name').html(funnelName)
+    $('#more-information-funnel-result').html(loadingElement)
     $.ajax({
         url: 'get-funnel-information.php',
         type: 'POST',
@@ -308,6 +319,31 @@ function moreInformationOnFunnel(funnelId) {
         },
         success: function(response) {
             console.log(response)
+            if (response.length > 0) {
+                let tempHtml = `<table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Funnel ID</th>
+                            <th>Funnel Name</th>
+                            <th>Step ID</th>
+                            <th>Deleted</th>
+                        </tr>
+                    </thead>
+                <tbody>`
+                // Example: log each campaign name
+                response.forEach(c => {
+                    tempHtml += `<tr>
+                        <td>${c._id}</td>
+                        <td>${c.name}</td>
+                        <td>${c.stepId}</td>
+                        <td>${c.deleted}</td>
+                    </tr>`
+                })
+                tempHtml += `</tbody></table>`
+                $('#more-information-funnel-result').html(tempHtml)
+            } else {
+                $('#more-information-funnel-result').html('<p>No additional information found for this funnel.</p>')
+            }
         },
         error: function(xhr, status, error) {
             console.error('AJAX Error:', error)
