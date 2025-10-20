@@ -49,6 +49,11 @@ $(document).ready(function() {
         getFunnelPages()
     })
 
+    // When Get Form Submissions button is clicked
+    $('#get-form-submissions-button').click(function() {
+        getFormSubmissions()
+    })
+
     // To close the more information about funnel section
     $('#close-more-information-funnel-button').click(function() {
         showHideSection(false, 'funnel-more-information-fullscreen')
@@ -281,6 +286,60 @@ function getFunnelPages() {
                         <td>${c.deleted}</td>
                         <td>${c.dateAdded}</td>
                         <td><button onClick="moreInformationOnFunnel('${c._id}', '${c.name.replace(/'/g, "")}')" type="button" class="btn btn-secondary btn-sm">More Information</button></td>
+                    </tr>`
+                })
+                tempHtml += `</tbody></table>`
+                $('#display-results').html(tempHtml)
+            } else if (response.error) {
+                console.error('Error:', response.error)
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('AJAX Error:', error)
+        }
+    })
+}
+
+/**
+ * Gets all the form submissions
+ * @returns void
+ */
+function getFormSubmissions() {
+    if (currentAccessToken.length === 0) {
+        console.error('No access token available. Cannot get campaigns.')
+        return
+    }
+    $('#display-results').html(loadingElement)
+    $.ajax({
+        url: 'get-form-submissions.php',
+        type: 'POST',
+        data: {
+            access_token: currentAccessToken,
+            location_id: currentLocationId
+        },
+        success: function(response) {
+            console.log(response)
+            if (response.submissions) {
+                let tempHtml = `<h3>Form Submissions</h3>`
+                tempHtml += `<table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Form ID</th>
+                            <th>Contact ID</th>
+                            <th>Form Name</th>
+                            <th>Email</th>
+                            <th>Date Created</th>
+                        </tr>
+                    </thead>
+                <tbody>`
+                // Example: log each campaign name
+                response.submissions.forEach(c => {
+                    tempHtml += `<tr>
+                        <td>${c.id}</td>
+                        <td>${c.contactId}</td>
+                        <td>${c.name}</td>
+                        <td>${c.email}</td>
+                        <td>${c.createdAt}</td>
                     </tr>`
                 })
                 tempHtml += `</tbody></table>`

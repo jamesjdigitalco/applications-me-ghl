@@ -59,6 +59,7 @@
         <button id="get-campaigns-button" class="btn btn-info">Get Campaigns</button>
         <button id="get-forms-button" class="btn btn-warning">Get Forms</button>
         <button id="get-funnel-pages-button" class="btn btn-dark">Get Funnel Pages</button>
+        <button id="get-form-submissions-button" class="btn btn-danger">Get Form Submissions</button>
     </p>
     <div id="display-results"></div>
 </div>
